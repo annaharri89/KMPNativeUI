@@ -4,7 +4,9 @@ Kotlin Multiplatform project for **Android** and **iOS** with **native UI on eac
 
 ## Demo
 
-![Demo](docs/kmp-app-native-ui-demo.mp4)
+![Android and iOS native UI side by side](docs/kmp-app-native-ui-demo.gif)
+
+[Full demo video (MP4)](docs/kmp-app-native-ui-demo.mp4)
 
 Shared Kotlin handles business logic, networking, and ViewModels. Each platform owns its UI and intentionally uses different platform patterns:
 
