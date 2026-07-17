@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp.screens
+package com.annaharri89.platformgallery.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -6,17 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -26,7 +24,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -42,22 +39,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.jetbrains.kmpapp.R
-import com.jetbrains.kmpapp.data.MuseumObject
+import com.annaharri89.platformgallery.R
+import com.annaharri89.platformgallery.data.PortfolioProject
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
+fun ListScreen(navigateToDetails: (projectId: Int) -> Unit) {
     val viewModel: ListViewModel = koinViewModel()
-    val objects by viewModel.objects.collectAsStateWithLifecycle()
+    val projects by viewModel.projects.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
-    val departmentFilter by viewModel.departmentFilter.collectAsStateWithLifecycle()
-    val departments by viewModel.departments.collectAsStateWithLifecycle()
+    val languageFilter by viewModel.languageFilter.collectAsStateWithLifecycle()
+    val languages by viewModel.languages.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.app_name)) })
+            TopAppBar(title = { Text(stringResource(R.string.tab_collection)) })
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { paddingValues ->
@@ -74,7 +71,7 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
                         onSearch = {},
                         expanded = false,
                         onExpandedChange = {},
-                        placeholder = { Text(stringResource(R.string.search_artworks)) },
+                        placeholder = { Text(stringResource(R.string.search_projects)) },
                         leadingIcon = {
                             Icon(Icons.Default.Search, contentDescription = null)
                         },
@@ -98,7 +95,7 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
                 content = {},
             )
 
-            if (departments.isNotEmpty()) {
+            if (languages.isNotEmpty()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -107,21 +104,21 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     FilterChip(
-                        selected = departmentFilter == null,
-                        onClick = { viewModel.setDepartmentFilter(null) },
+                        selected = languageFilter == null,
+                        onClick = { viewModel.setLanguageFilter(null) },
                         label = { Text(stringResource(R.string.filter_all)) },
                     )
-                    departments.forEach { department ->
+                    languages.forEach { language ->
                         FilterChip(
-                            selected = departmentFilter == department,
+                            selected = languageFilter == language,
                             onClick = {
-                                viewModel.setDepartmentFilter(
-                                    if (departmentFilter == department) null else department
+                                viewModel.setLanguageFilter(
+                                    if (languageFilter == language) null else language
                                 )
                             },
                             label = {
                                 Text(
-                                    department,
+                                    language,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -132,10 +129,10 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
             }
 
             when {
-                objects.isEmpty() && query.isEmpty() && departmentFilter == null -> {
+                projects.isEmpty() && query.isEmpty() && languageFilter == null -> {
                     EmptyScreenContent(Modifier.fillMaxSize())
                 }
-                objects.isEmpty() -> {
+                projects.isEmpty() -> {
                     EmptyScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         message = stringResource(R.string.no_results),
@@ -146,10 +143,10 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 16.dp),
                     ) {
-                        items(objects, key = { it.objectID }) { obj ->
-                            MuseumListRow(
-                                obj = obj,
-                                onClick = { navigateToDetails(obj.objectID) },
+                        items(projects, key = { it.id }) { project ->
+                            ProjectListRow(
+                                project = project,
+                                onClick = { navigateToDetails(project.id) },
                             )
                             HorizontalDivider()
                         }
@@ -161,14 +158,14 @@ fun ListScreen(navigateToDetails: (objectId: Int) -> Unit) {
 }
 
 @Composable
-private fun MuseumListRow(
-    obj: MuseumObject,
+private fun ProjectListRow(
+    project: PortfolioProject,
     onClick: () -> Unit,
 ) {
     ListItem(
         headlineContent = {
             Text(
-                obj.title.ifBlank { "Untitled" },
+                project.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -176,11 +173,11 @@ private fun MuseumListRow(
         supportingContent = {
             Text(
                 buildString {
-                    append(obj.artistDisplayName.ifBlank { "Unknown artist" })
-                    if (obj.objectDate.isNotBlank()) {
-                        append(" · ")
-                        append(obj.objectDate)
-                    }
+                    append(project.languageOrUnknown)
+                    append(" · ")
+                    append(project.starsAndForks)
+                    append(" · ")
+                    append(project.updatedDateLabel)
                 },
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -188,12 +185,12 @@ private fun MuseumListRow(
         },
         leadingContent = {
             AsyncImage(
-                model = obj.primaryImageSmall,
-                contentDescription = obj.title,
+                model = project.avatarUrl,
+                contentDescription = project.ownerLogin,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(CircleShape),
             )
         },
         modifier = Modifier

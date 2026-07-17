@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.annaharri89.platformgallery
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
