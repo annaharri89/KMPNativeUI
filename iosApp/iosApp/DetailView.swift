@@ -11,7 +11,7 @@ struct DetailView: View {
         favoritesStore: KoinDependencies().favoritesStore
     )
 
-    let projectId: Int32
+    let projectId: Int64
 
     var body: some View {
         Group {

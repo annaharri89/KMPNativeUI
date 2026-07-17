@@ -12,7 +12,20 @@ struct ListView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.projects.isEmpty {
+                if viewModel.isLoading && viewModel.projects.isEmpty {
+                    ProgressView("Loading projects…")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = viewModel.errorMessage, viewModel.projects.isEmpty {
+                    VStack(spacing: 16) {
+                        Text(error)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Button("Retry") {
+                            viewModel.refresh()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.projects.isEmpty {
                     EmptyCollectionView(
                         title: viewModel.query.isEmpty && viewModel.languageFilter == nil
                             ? "No projects available"

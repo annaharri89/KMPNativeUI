@@ -18,7 +18,7 @@ class DetailViewModel(
     private val portfolioRepository: PortfolioRepository,
     private val favoritesStore: FavoritesStore,
 ) : ViewModel() {
-    private val projectId = MutableStateFlow<Int?>(null)
+    private val projectId = MutableStateFlow<Long?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @NativeCoroutinesState
@@ -35,7 +35,7 @@ class DetailViewModel(
             id != null && id in favorites
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    fun setId(projectId: Int) {
+    fun setId(projectId: Long) {
         this.projectId.value = projectId
     }
 

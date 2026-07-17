@@ -12,11 +12,11 @@ class FavoritesStore(
 ) {
     private val favoriteIds = MutableStateFlow(loadFavoriteIds())
 
-    val favorites: StateFlow<Set<Int>> = favoriteIds.asStateFlow()
+    val favorites: StateFlow<Set<Long>> = favoriteIds.asStateFlow()
 
-    fun isFavorite(projectId: Int): Boolean = projectId in favoriteIds.value
+    fun isFavorite(projectId: Long): Boolean = projectId in favoriteIds.value
 
-    fun toggle(projectId: Int) {
+    fun toggle(projectId: Long) {
         favoriteIds.update { current ->
             val updated =
                 if (projectId in current) current - projectId else current + projectId
@@ -25,15 +25,15 @@ class FavoritesStore(
         }
     }
 
-    private fun loadFavoriteIds(): Set<Int> {
+    private fun loadFavoriteIds(): Set<Long> {
         val raw = settings.getStringOrNull(FAVORITE_IDS_KEY).orEmpty()
         if (raw.isBlank()) return emptySet()
         return raw.split(SEPARATOR)
-            .mapNotNull { it.trim().toIntOrNull() }
+            .mapNotNull { it.trim().toLongOrNull() }
             .toSet()
     }
 
-    private fun persistFavoriteIds(ids: Set<Int>) {
+    private fun persistFavoriteIds(ids: Set<Long>) {
         settings[FAVORITE_IDS_KEY] = ids.sorted().joinToString(SEPARATOR)
     }
 

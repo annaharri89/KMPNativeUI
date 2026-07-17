@@ -44,7 +44,7 @@ import com.annaharri89.platformgallery.data.PortfolioProject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun DetailScreen(projectId: Int, navigateBack: () -> Unit) {
+fun DetailScreen(projectId: Long, navigateBack: () -> Unit) {
     val viewModel: DetailViewModel = koinViewModel()
     val project by viewModel.project.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()

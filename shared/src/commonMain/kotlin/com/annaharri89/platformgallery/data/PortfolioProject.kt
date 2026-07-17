@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PortfolioProject(
-    val id: Int,
+    val id: Long,
     val name: String,
     @SerialName("description") val summary: String? = null,
     val language: String? = null,

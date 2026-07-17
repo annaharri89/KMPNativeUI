@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 interface PortfolioStorage {
     suspend fun saveProjects(newProjects: List<PortfolioProject>)
 
-    fun getProjectById(projectId: Int): Flow<PortfolioProject?>
+    fun getProjectById(projectId: Long): Flow<PortfolioProject?>
 
     fun getProjects(): Flow<List<PortfolioProject>>
 }
@@ -19,7 +19,7 @@ class InMemoryPortfolioStorage : PortfolioStorage {
         storedProjects.value = newProjects
     }
 
-    override fun getProjectById(projectId: Int): Flow<PortfolioProject?> {
+    override fun getProjectById(projectId: Long): Flow<PortfolioProject?> {
         return storedProjects.map { projects ->
             projects.find { it.id == projectId }
         }

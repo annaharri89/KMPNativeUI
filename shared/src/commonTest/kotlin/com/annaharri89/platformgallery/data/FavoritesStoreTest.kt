@@ -11,25 +11,25 @@ class FavoritesStoreTest {
     fun toggleAddsAndRemovesFavoriteIds() {
         val store = FavoritesStore(MapSettings())
 
-        store.toggle(101)
-        assertTrue(store.isFavorite(101))
-        assertEquals(setOf(101), store.favorites.value)
+        store.toggle(101L)
+        assertTrue(store.isFavorite(101L))
+        assertEquals(setOf(101L), store.favorites.value)
 
-        store.toggle(101)
-        assertFalse(store.isFavorite(101))
-        assertEquals(emptySet(), store.favorites.value)
+        store.toggle(101L)
+        assertFalse(store.isFavorite(101L))
+        assertEquals(emptySet<Long>(), store.favorites.value)
     }
 
     @Test
     fun favoritesSurviveStoreRecreation() {
         val settings = MapSettings()
         val firstStore = FavoritesStore(settings)
-        firstStore.toggle(42)
-        firstStore.toggle(7)
+        firstStore.toggle(42L)
+        firstStore.toggle(7L)
 
         val reloadedStore = FavoritesStore(settings)
-        assertEquals(setOf(7, 42), reloadedStore.favorites.value)
-        assertTrue(reloadedStore.isFavorite(42))
-        assertTrue(reloadedStore.isFavorite(7))
+        assertEquals(setOf(7L, 42L), reloadedStore.favorites.value)
+        assertTrue(reloadedStore.isFavorite(42L))
+        assertTrue(reloadedStore.isFavorite(7L))
     }
 }

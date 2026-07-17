@@ -42,7 +42,7 @@ object FavoritesDestination
 object TourDestination
 
 @Serializable
-data class DetailDestination(val projectId: Int)
+data class DetailDestination(val projectId: Long)
 
 private data class BottomNavItem(
     val route: Any,

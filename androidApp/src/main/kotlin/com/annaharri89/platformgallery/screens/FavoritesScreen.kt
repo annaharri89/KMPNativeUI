@@ -39,7 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(navigateToDetails: (projectId: Int) -> Unit) {
+fun FavoritesScreen(navigateToDetails: (projectId: Long) -> Unit) {
     val viewModel: FavoritesViewModel = koinViewModel()
     val favorites by viewModel.favorites.collectAsStateWithLifecycle()
 

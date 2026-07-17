@@ -20,6 +20,8 @@
     <string name="save_favorite">Save</string>
     <string name="remove_favorite">Remove</string>
     <string name="no_data_available">No projects available</string>
+    <string name="loading_projects">Loading projects…</string>
+    <string name="retry">Retry</string>
     <string name="no_results">No matching projects</string>
     <string name="no_favorites">No favorites yet</string>
     <string name="no_favorites_hint">Tap the heart on a project to save it here.</string>

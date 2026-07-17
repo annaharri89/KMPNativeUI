@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
-class ListViewModel(portfolioRepository: PortfolioRepository) : ViewModel() {
+class ListViewModel(
+    private val portfolioRepository: PortfolioRepository,
+) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
     private val selectedLanguage = MutableStateFlow<String?>(null)
 
@@ -24,6 +26,14 @@ class ListViewModel(portfolioRepository: PortfolioRepository) : ViewModel() {
 
     @NativeCoroutinesState
     val languageFilter: StateFlow<String?> = selectedLanguage
+
+    @NativeCoroutinesState
+    val isLoading: StateFlow<Boolean> = portfolioRepository.isLoading
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
+    @NativeCoroutinesState
+    val errorMessage: StateFlow<String?> = portfolioRepository.errorMessage
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     @NativeCoroutinesState
     val languages: StateFlow<List<String>> = allProjects
@@ -48,6 +58,10 @@ class ListViewModel(portfolioRepository: PortfolioRepository) : ViewModel() {
 
     fun setLanguageFilter(language: String?) {
         selectedLanguage.value = language
+    }
+
+    fun refresh() {
+        portfolioRepository.requestRefresh()
     }
 
     private fun matchesQuery(project: PortfolioProject, queryText: String): Boolean {
