@@ -9,7 +9,22 @@ struct iOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ListView()
+            TabView {
+                ListView()
+                    .tabItem {
+                        Label("Projects", systemImage: "shippingbox")
+                    }
+
+                FavoritesView()
+                    .tabItem {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+
+                PlatformTourView()
+                    .tabItem {
+                        Label("UI Tour", systemImage: "info.circle")
+                    }
+            }
         }
     }
 }

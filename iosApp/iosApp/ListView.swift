@@ -6,26 +6,26 @@ import Shared
 struct ListView: View {
     @StateViewModel
     var viewModel = ListViewModel(
-        museumRepository: KoinDependencies().museumRepository
+        portfolioRepository: KoinDependencies().portfolioRepository
     )
 
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.objects.isEmpty {
+                if viewModel.projects.isEmpty {
                     EmptyCollectionView(
-                        title: viewModel.query.isEmpty && viewModel.departmentFilter == nil
-                            ? "No data available"
-                            : "No matching artworks"
+                        title: viewModel.query.isEmpty && viewModel.languageFilter == nil
+                            ? "No projects available"
+                            : "No matching projects"
                     )
                 } else {
                     List {
                         Section {
-                            ForEach(viewModel.objects, id: \.objectID) { item in
+                            ForEach(viewModel.projects, id: \.id) { item in
                                 NavigationLink {
-                                    DetailView(objectId: item.objectID)
+                                    DetailView(projectId: item.id)
                                 } label: {
-                                    MuseumRow(obj: item)
+                                    ProjectRow(project: item)
                                 }
                             }
                         } header: {
@@ -35,39 +35,39 @@ struct ListView: View {
                     .listStyle(.insetGrouped)
                 }
             }
-            .navigationTitle("KMP App")
+            .navigationTitle("Projects")
             .navigationBarTitleDisplayMode(.large)
             .searchable(
                 text: Binding(
                     get: { viewModel.query },
                     set: { viewModel.setSearchQuery(value: $0) }
                 ),
-                prompt: "Search artworks"
+                prompt: "Search projects"
             )
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("All departments") {
-                            viewModel.setDepartmentFilter(department: nil)
+                        Button("All languages") {
+                            viewModel.setLanguageFilter(language: nil)
                         }
                         Divider()
-                        ForEach(viewModel.departments, id: \.self) { department in
+                        ForEach(viewModel.languages, id: \.self) { language in
                             Button {
-                                let currentlySelected = viewModel.departmentFilter == department
-                                viewModel.setDepartmentFilter(
-                                    department: currentlySelected ? nil : department
+                                let currentlySelected = viewModel.languageFilter == language
+                                viewModel.setLanguageFilter(
+                                    language: currentlySelected ? nil : language
                                 )
                             } label: {
                                 HStack {
-                                    Text(department)
-                                    if viewModel.departmentFilter == department {
+                                    Text(language)
+                                    if viewModel.languageFilter == language {
                                         Image(systemName: "checkmark")
                                     }
                                 }
                             }
                         }
                     } label: {
-                        Image(systemName: viewModel.departmentFilter == nil
+                        Image(systemName: viewModel.languageFilter == nil
                               ? "line.3.horizontal.decrease.circle"
                               : "line.3.horizontal.decrease.circle.fill")
                     }
@@ -77,10 +77,10 @@ struct ListView: View {
     }
 
     private var sectionHeader: String {
-        if let department = viewModel.departmentFilter {
-            return department
+        if let language = viewModel.languageFilter {
+            return language
         }
-        return "Artworks"
+        return "Repositories"
     }
 }
 
@@ -89,13 +89,13 @@ struct EmptyCollectionView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Image(systemName: "photo.on.rectangle.angled")
+            Image(systemName: "shippingbox")
                 .font(.system(size: 40))
                 .foregroundStyle(.secondary)
             Text(title)
                 .font(.title3)
                 .fontWeight(.semibold)
-            Text("Try a different search or filter.")
+            Text("Try a different search or language filter.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -105,12 +105,12 @@ struct EmptyCollectionView: View {
     }
 }
 
-struct MuseumRow: View {
-    let obj: MuseumObject
+struct ProjectRow: View {
+    let project: PortfolioProject
 
     var body: some View {
         HStack(spacing: 12) {
-            AsyncImage(url: URL(string: obj.primaryImageSmall)) { phase in
+            AsyncImage(url: URL(string: project.avatarUrl)) { phase in
                 switch phase {
                 case .success(let image):
                     image
@@ -123,10 +123,10 @@ struct MuseumRow: View {
                 }
             }
             .frame(width: 56, height: 56)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(obj.title.isEmpty ? "Untitled" : obj.title)
+                Text(project.name)
                     .font(.body)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
@@ -141,10 +141,6 @@ struct MuseumRow: View {
     }
 
     private var subtitle: String {
-        let artist = obj.artistDisplayName.isEmpty ? "Unknown artist" : obj.artistDisplayName
-        if obj.objectDate.isEmpty {
-            return artist
-        }
-        return "\(artist) · \(obj.objectDate)"
+        "\(project.languageOrUnknown) · \(project.starsAndForks) · \(project.updatedDateLabel)"
     }
 }
