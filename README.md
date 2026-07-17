@@ -1,28 +1,37 @@
-# KmpNativeUi
+# Platform Gallery
 
-Kotlin Multiplatform project for **Android** and **iOS** with **native UI on each platform**.
+Kotlin Multiplatform demo with shared business logic and native UI on each platform.
+
+Android uses Material 3. iOS uses SwiftUI. Same ViewModels and favorites persistence — different controls on purpose.
+
+Live data comes from my public GitHub repos: [`annaharri89`](https://github.com/annaharri89).
 
 ## Demo
 
-![Android and iOS native UI side by side](docs/kmp-app-native-ui-demo.gif)
+![Platform Gallery Android and iOS portfolio demo](docs/platform-gallery-demo.gif)
 
-[Full demo video (MP4)](docs/kmp-app-native-ui-demo.mp4)
+[Full demo video (MP4)](docs/platform-gallery-demo.mp4)
 
-Shared Kotlin handles business logic, networking, and ViewModels. Each platform owns its UI and intentionally uses different platform patterns:
+Shared Kotlin handles networking, filtering, favorites, and ViewModels. Each platform owns its UI:
 
 | | Android (Material 3) | iOS (SwiftUI / HIG) |
 |---|---|---|
-| List | `LazyColumn` + `ListItem` rows | Inset-grouped `List` |
+| Primary navigation | Bottom `NavigationBar` | System `TabView` |
+| Project list | `LazyColumn` + `ListItem` | Inset-grouped `List` |
 | Search | Material `SearchBar` | `.searchable` |
-| Filters | `FilterChip` row | Toolbar `Menu` |
-| Detail | Cards + **FAB** favorite | `Form` + toolbar heart + `Toggle` |
+| Filters | `FilterChip` by language | Toolbar `Menu` by language |
+| Detail favorite | FAB heart | Toolbar heart + `Toggle` |
+| External link | Material `Button` | SwiftUI `Link` |
+| Feedback | `Snackbar` | Alert / confirmation dialog |
 
-Based on JetBrains’ [KMP-App-Template-Native](https://github.com/Kotlin/KMP-App-Template-Native). Sample screens load art from the [Met Museum API](https://metmuseum.github.io/).
+Favorites go through a shared `FavoritesStore` backed by [multiplatform-settings](https://github.com/russhwolf/multiplatform-settings) (SharedPreferences on Android, NSUserDefaults on iOS).
+
+There’s also a small UI Tour tab on each platform that shows Material vs HIG controls side by side with the same product features.
 
 ## Structure
 
 ```
-KmpNativeUi/
+PlatformGallery/
 ├── shared/       # KMP library: commonMain + androidMain + iosMain
 ├── androidApp/   # Android application (Compose / Material UI)
 └── iosApp/       # Xcode project (SwiftUI UI)
@@ -37,3 +46,7 @@ KmpNativeUi/
 ```
 
 **iOS** (macOS + Xcode): open `iosApp/iosApp.xcodeproj` and run. Xcode builds the `Shared` framework via Gradle before compiling Swift.
+
+Unauthenticated GitHub API calls are capped at 60 requests/hour per IP.
+
+Based on JetBrains’ [KMP-App-Template-Native](https://github.com/Kotlin/KMP-App-Template-Native). Repo metadata from the [GitHub REST API](https://docs.github.com/en/rest).

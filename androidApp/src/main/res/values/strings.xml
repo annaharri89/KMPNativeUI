@@ -1,22 +1,33 @@
 <resources>
-    <string name="app_name">KMP App</string>
+    <string name="app_name">Platform Gallery</string>
 
-    <string name="label_title">Title</string>
-    <string name="label_artist">Artist</string>
-    <string name="label_date">Date</string>
-    <string name="label_dimensions">Dimensions</string>
-    <string name="label_medium">Medium</string>
-    <string name="label_department">Department</string>
-    <string name="label_repository">Repository</string>
-    <string name="label_credits">Credits</string>
+    <string name="tab_collection">Projects</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_tour">UI Tour</string>
+
+    <string name="label_language">Language</string>
+    <string name="label_updated">Updated</string>
+    <string name="label_stars">Stars</string>
+    <string name="label_forks">Forks</string>
+    <string name="label_owner">Owner</string>
+    <string name="label_license">License</string>
+    <string name="label_description">Description</string>
+    <string name="label_url">GitHub</string>
 
     <string name="back">Back</string>
-    <string name="search_artworks">Search artworks</string>
+    <string name="search_projects">Search projects</string>
     <string name="filter_all">All</string>
     <string name="save_favorite">Save</string>
     <string name="remove_favorite">Remove</string>
-    <string name="no_data_available">No data available</string>
-    <string name="no_results">No matching artworks</string>
-    <string name="artwork_details">Details</string>
-    <string name="collection_info">Collection</string>
+    <string name="no_data_available">No projects available</string>
+    <string name="loading_projects">Loading projects…</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">No matching projects</string>
+    <string name="no_favorites">No favorites yet</string>
+    <string name="no_favorites_hint">Tap the heart on a project to save it here.</string>
+    <string name="project_details">Project</string>
+    <string name="stats_info">Stats</string>
+    <string name="tour_title">Material UI Tour</string>
+    <string name="tour_intro">These controls are Material 3 patterns used in this Android app. iOS uses different HIG controls for the same product features.</string>
+    <string name="open_on_github">Open on GitHub</string>
 </resources>

@@ -7,17 +7,17 @@ import KMPObservableViewModelSwiftUI
 struct DetailView: View {
     @StateViewModel
     var viewModel = DetailViewModel(
-        museumRepository: KoinDependencies().museumRepository,
+        portfolioRepository: KoinDependencies().portfolioRepository,
         favoritesStore: KoinDependencies().favoritesStore
     )
 
-    let objectId: Int32
+    let projectId: Int64
 
     var body: some View {
         Group {
-            if let obj = viewModel.museumObject {
-                ObjectDetails(
-                    obj: obj,
+            if let project = viewModel.project {
+                ProjectDetails(
+                    project: project,
                     isFavorite: viewModel.isFavorite,
                     onToggleFavorite: { viewModel.toggleFavorite() }
                 )
@@ -25,7 +25,7 @@ struct DetailView: View {
                 ProgressView("Loading…")
             }
         }
-        .navigationTitle("Artwork")
+        .navigationTitle("Project")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -39,67 +39,61 @@ struct DetailView: View {
             }
         }
         .onAppear {
-            viewModel.setId(objectId: objectId)
+            viewModel.setId(projectId: projectId)
         }
     }
 }
 
-struct ObjectDetails: View {
-    var obj: MuseumObject
+struct ProjectDetails: View {
+    var project: PortfolioProject
     var isFavorite: Bool
     var onToggleFavorite: () -> Void
 
     var body: some View {
         Form {
             Section {
-                AsyncImage(url: URL(string: obj.primaryImageSmall)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 220)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 220)
-                            .clipped()
-                            .listRowInsets(EdgeInsets())
-                    default:
-                        Color.gray.opacity(0.15)
-                            .frame(height: 220)
-                            .listRowInsets(EdgeInsets())
+                HStack {
+                    Spacer()
+                    AsyncImage(url: URL(string: project.avatarUrl)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        default:
+                            Color.gray.opacity(0.15)
+                        }
                     }
+                    .frame(width: 96, height: 96)
+                    .clipShape(Circle())
+                    Spacer()
+                }
+                .listRowBackground(Color.clear)
+            }
+
+            Section("Project") {
+                LabeledContent("Name", value: project.name)
+                if let summary = project.summary, !summary.isEmpty {
+                    LabeledContent("Description", value: summary)
+                }
+                LabeledContent("Language", value: project.languageOrUnknown)
+                LabeledContent("Updated", value: project.updatedDateLabel)
+            }
+
+            Section("Stats") {
+                LabeledContent("Stars", value: String(project.stargazersCount))
+                LabeledContent("Forks", value: String(project.forksCount))
+                LabeledContent("Owner", value: project.ownerLogin)
+                if !project.licenseName.isEmpty {
+                    LabeledContent("License", value: project.licenseName)
                 }
             }
 
-            Section("Artwork") {
-                LabeledContent("Title", value: obj.title.isEmpty ? "Untitled" : obj.title)
-                LabeledContent(
-                    "Artist",
-                    value: obj.artistDisplayName.isEmpty ? "Unknown artist" : obj.artistDisplayName
-                )
-                if !obj.objectDate.isEmpty {
-                    LabeledContent("Date", value: obj.objectDate)
-                }
-                if !obj.medium.isEmpty {
-                    LabeledContent("Medium", value: obj.medium)
-                }
-                if !obj.dimensions.isEmpty {
-                    LabeledContent("Dimensions", value: obj.dimensions)
-                }
-            }
-
-            Section("Collection") {
-                if !obj.department.isEmpty {
-                    LabeledContent("Department", value: obj.department)
-                }
-                if !obj.repository.isEmpty {
-                    LabeledContent("Repository", value: obj.repository)
-                }
-                if !obj.creditLine.isEmpty {
-                    LabeledContent("Credits", value: obj.creditLine)
+            Section {
+                if let url = URL(string: project.htmlUrl) {
+                    Link("Open on GitHub", destination: url)
                 }
             }
 
